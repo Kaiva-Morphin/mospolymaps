@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "8zL++tZJFMi+OQ+YoegpyE40X2PtgvuQrWCr5HHWm0sNbn2hj0R1n3u5TqG2/qw+J27VasmtA5qqP8D+2vn81A==",
+  "success": true,
+  "projectFilePath": "C:\\godot_projects\\mospolymaps\\mospolymaps.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\morphin\\.nuget\\packages\\microsoft.netframework.referenceassemblies\\1.0.3\\microsoft.netframework.referenceassemblies.1.0.3.nupkg.sha512",
+    "C:\\Users\\morphin\\.nuget\\packages\\microsoft.netframework.referenceassemblies.net472\\1.0.3\\microsoft.netframework.referenceassemblies.net472.1.0.3.nupkg.sha512"
+  ],
+  "logs": []
+}

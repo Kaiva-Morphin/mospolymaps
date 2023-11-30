@@ -1,0 +1,9 @@
+C:\godot_projects\mospolymaps\.mono\temp\bin\Debug\mospolymaps.dll
+C:\godot_projects\mospolymaps\.mono\temp\bin\Debug\mospolymaps.pdb
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.csproj.AssemblyReference.cache
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.GeneratedMSBuildEditorConfig.editorconfig
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.AssemblyInfoInputs.cache
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.AssemblyInfo.cs
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.csproj.CoreCompileInputs.cache
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.dll
+C:\godot_projects\mospolymaps\.mono\temp\obj\Debug\mospolymaps.pdb

@@ -23,22 +23,13 @@ onready var fl5 = $"result/5"
 onready var fl6 = $"result/6"
 onready var fl7 = $"result/7"
 onready var fl8 = $"result/8"
+
 func _on_VSlider_changed():
-	match $UI/VSlider.value:
-		1:
-			pass
-		2:
-			pass
-		3:
-			pass
-		4:
-			pass
-		5:
-			pass
-		6:
-			pass
-		7:
-			pass
-		8:
-			pass
+	
 	pass # Replace with function body.
+
+
+func _on_VSlider_gui_input(event):
+	$CameraOrigin.set_floor($UI/VSlider.value)
+
+

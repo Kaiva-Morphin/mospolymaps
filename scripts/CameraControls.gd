@@ -1,7 +1,10 @@
 extends Spatial
 
+func _init():
+	call_deferred("set_floor", 1)
+
 func _process(_delta):
-	if last_frame != Engine.get_frames_drawn(): # new frame!
+	if last_frame != Engine.get_frames_drawn() and focused: # new frame!
 		last_frame = Engine.get_frames_drawn()
 		if len(touches_data) == 1 and len(touches) == 1: # rotate if one finger
 			var v = touches_data[0].relative * 0.002
@@ -35,7 +38,7 @@ func _process(_delta):
 					multipler = -1
 				$Camera.translation.z = clamp(
 					$Camera.translation.z + (finger_1_vector - finger_2_vector).length() * 0.03 * multipler,
-					-40,
+					-60,
 					0.1
 				)
 				
@@ -45,19 +48,68 @@ func _process(_delta):
 var touches = {}
 var touches_data  = []
 var last_frame = 0
-func _input(event):
-	if event is InputEventScreenTouch:
-		if event.pressed:
-			touches[event.index] = event
+var focused = false
+#func _input(event):
+#	if event is InputEventScreenTouch:
+#		if event.pressed:
+#			touches[event.index] = event
+#		else:
+#			touches.erase(event.index)
+#	if  event is InputEventScreenDrag:
+#		touches_data.append(event)
+
+func set_floor(i): # todo: rewrite
+	get_parent().get_node("result/ROOF").hide()
+	for n in range(1, 100):
+		var res = get_parent().get_node_or_null("result/" + str(n))
+		if res:
+			if n < i:
+				res.show()
+				for children in res.get_children():
+					children.show()
+			if n == i:
+				self.translation.y = res.translation.y
+				res.show()
+				for children in res.get_children():
+					children.show()
+				res.get_node(str(n) + "_CEIL").hide()
+			if n > i:
+				res.hide()
 		else:
-			touches.erase(event.index)
-	if  event is InputEventScreenDrag:
-		touches_data.append(event)
-
-
+			break
 
 func _on_Button_pressed(): # todo: add animation
 	self.translation = Vector3.ZERO
 	$Camera.translation = Vector3(0, 0, -28)
 	self.rotation = Vector3(10, 0, 0)
 
+
+
+
+
+func _input(event):
+	if event is InputEventScreenTouch:
+		print(focused)
+		if event.pressed:
+			touches[event.index] = event
+		else:
+			touches.erase(event.index)
+	if  event is InputEventScreenDrag:
+		
+		touches_data.append(event)
+
+
+func _on_UI_focus_entered():
+	focused = true
+
+
+func _on_UI_focus_exited():
+	focused = false
+
+
+func _on_UI_mouse_entered():
+	focused = true
+
+
+func _on_UI_mouse_exited():
+	focused = false

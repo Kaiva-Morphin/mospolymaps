@@ -1,0 +1,158 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://GraphTest.gd" type="Script" id=1]
+[ext_resource path="res://TerminusTTF-4.49.3.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="ProceduralSky" id=9]
+sky_top_color = Color( 1, 1, 1, 1 )
+sky_curve = 3.55923
+ground_horizon_color = Color( 0.454902, 0.729412, 1, 1 )
+ground_curve = 0.485029
+
+[sub_resource type="Environment" id=10]
+background_sky = SubResource( 9 )
+ambient_light_color = Color( 1, 1, 1, 1 )
+ambient_light_energy = 0.5
+
+[sub_resource type="DynamicFont" id=11]
+font_data = ExtResource( 2 )
+
+[sub_resource type="SpatialMaterial" id=12]
+
+[sub_resource type="TextMesh" id=13]
+material = SubResource( 12 )
+text = "tttt"
+font = SubResource( 11 )
+
+[node name="Spatial" type="Spatial"]
+script = ExtResource( 1 )
+
+[node name="Camera" type="Camera" parent="."]
+transform = Transform( 1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 15, 0 )
+projection = 1
+size = 23.762
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 10 )
+
+[node name="Control" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="MODE" type="OptionButton" parent="Control"]
+anchor_right = 0.295
+anchor_bottom = 0.071
+margin_right = -1.52588e-05
+margin_bottom = 0.0999985
+text = "Make_Line"
+items = [ "Make_Line", null, false, 0, null, "Remove_Line", null, false, 1, null, "Set_Endpoint_Group", null, false, 2, null, "Set_Ladder", null, false, 3, null, "Clear", null, false, 4, null, "Test_Path", null, false, 5, null, "Add_Point", null, false, 6, null, "Remove_Point", null, false, 7, null ]
+selected = 0
+
+[node name="FLOOR" type="OptionButton" parent="Control"]
+anchor_top = 0.862
+anchor_right = 0.303
+anchor_bottom = 0.939
+margin_left = 8.0
+margin_top = 0.199951
+margin_right = 2.2
+margin_bottom = -4.10004
+
+[node name="TextEdit" type="TextEdit" parent="Control"]
+visible = false
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+rect_min_size = Vector2( 0, 50 )
+
+[node name="Button" type="Button" parent="Control/TextEdit"]
+anchor_left = 0.168
+anchor_top = 1.0
+anchor_right = 0.836
+anchor_bottom = 1.626
+margin_left = 0.199989
+margin_top = 5.0
+margin_right = -0.178009
+margin_bottom = -0.0200043
+text = "DONE"
+
+[node name="Load" type="Button" parent="Control"]
+anchor_left = 0.853
+anchor_right = 1.0
+anchor_bottom = 0.071
+margin_left = 0.199982
+margin_right = 1.0
+margin_bottom = 0.0999985
+rect_pivot_offset = Vector2( -192, 40 )
+text = "LOAD"
+
+[node name="LoadTscn" type="Button" parent="Control"]
+anchor_left = 0.853
+anchor_top = 0.142
+anchor_right = 1.0
+anchor_bottom = 0.213
+margin_left = 0.199982
+margin_top = 0.199997
+margin_bottom = -1.70001
+rect_pivot_offset = Vector2( 24, 64 )
+text = "LOAD TSCN"
+
+[node name="Save" type="Button" parent="Control"]
+anchor_left = 0.853
+anchor_top = 0.071
+anchor_right = 1.0
+anchor_bottom = 0.142
+margin_left = 0.199982
+margin_top = 0.0999985
+margin_right = 1.0
+margin_bottom = 0.199997
+rect_pivot_offset = Vector2( 24, 64 )
+text = "SAVE"
+
+[node name="FileDialog" type="FileDialog" parent="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+window_title = "Сохранить файл"
+mode_overrides_title = false
+mode = 0
+access = 2
+
+[node name="Groups" type="OptionButton" parent="Control"]
+anchor_top = 0.071
+anchor_right = 0.293
+anchor_bottom = 0.142
+margin_top = 0.0999985
+margin_right = 0.199997
+margin_bottom = 0.199997
+
+[node name="Add_Group" type="Button" parent="Control/Groups"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.5
+text = "ADD NEW GROUP"
+
+[node name="LineEdit" type="LineEdit" parent="Control"]
+anchor_left = 0.92
+anchor_top = 0.884
+anchor_right = 1.013
+anchor_bottom = 0.907
+margin_left = -8.0
+margin_top = -3.60004
+margin_right = -5.79999
+margin_bottom = -0.300049
+text = "1"
+
+[node name="Model" type="Spatial" parent="."]
+
+[node name="Paths" type="Spatial" parent="."]
+
+[node name="MeshInstance" type="MeshInstance" parent="."]
+transform = Transform( 1, 0, 0, 0, -0.200514, 0.979691, 0, -0.979691, -0.200514, 0, 0, 0 )
+mesh = SubResource( 13 )
+
+[connection signal="item_selected" from="Control/MODE" to="." method="_on_OptionButton_item_selected"]
+[connection signal="item_selected" from="Control/FLOOR" to="." method="_on_FLOOR_item_selected"]
+[connection signal="pressed" from="Control/Load" to="." method="_on_Load_pressed"]
+[connection signal="pressed" from="Control/LoadTscn" to="." method="_on_LoadTscn_pressed"]
+[connection signal="pressed" from="Control/Save" to="." method="_on_Save_pressed"]
+[connection signal="file_selected" from="Control/FileDialog" to="." method="_on_FileDialog_file_selected"]
+[connection signal="text_entered" from="Control/LineEdit" to="." method="_on_LineEdit_text_entered"]

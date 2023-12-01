@@ -6,7 +6,7 @@ export var uv_scale: Vector2 = Vector2(4.0,1.0)
 onready var line3D = get_parent()
 var camera
 
-var custom_line_material = preload("res://Line3D_spatial_material.tres")
+var custom_line_material = preload("res://resources/Line3D_spatial_material.tres")
 
 func _ready():
 	update()

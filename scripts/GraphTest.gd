@@ -29,7 +29,7 @@ var building_floors = []
 
 var node_preview_floors = {}
 
-func parse_glb(path):
+func parse_glb(path): # todo: autopath using raycasts
 	var scene = load(path).instance()
 	for c in scene.get_children():
 		scene.remove_child(c)
@@ -104,7 +104,7 @@ func parse_glb(path):
 			label.material_override = SpatialMaterial.new()
 			label.material_override.albedo_color = Color.black
 			label.mesh.font = DynamicFont.new()
-			label.mesh.font.font_data = load("res://TerminusTTF-4.49.3.ttf")
+			label.mesh.font.font_data = load("res://resources/fonts/TerminusTTF-4.49.3.ttf")
 			ar.add_child(label)
 			node.add_child(ar)
 		node_preview_floors[floor_node_idx] = nodes
@@ -177,14 +177,14 @@ func _input(event):
 						node.get_node("MESH").material_override.albedo_color = Color.deeppink
 						point = null
 					Mode.Add_Point:
-						pass
+						print("todo!")
 					Mode.Remove_Point:
 						PATHFINDER.call("Erase_point", node.get_parent())
 						node.queue_free()
 					_:
 						node.get_node("MESH").scale = Vector3(0.15, 0.15, 0.15)
 						point = node
-					
+						print(str(self.get_path_to(node)))
 			else:
 				if point != node:
 					match current_mode:
@@ -194,7 +194,7 @@ func _input(event):
 							node.get_node("MESH").scale = Vector3(0.1, 0.1, 0.1)
 							point.get_node("MESH").material_override.albedo_color = Color.yellow
 							node.get_node("MESH").material_override.albedo_color = Color.yellow
-							PATHFINDER.call("Register_bind", node.get_parent(), point.get_parent(), distance)
+							PATHFINDER.call("Register_bind", str(self.get_path_to(node.get_parent())), str(self.get_path_to(point.get_parent())), distance)
 							add_line(node.get_parent(), point.get_parent())
 							point = node
 							point.get_node("MESH").scale = Vector3(0.15, 0.15, 0.15)
@@ -203,7 +203,7 @@ func _input(event):
 							node.get_node("MESH").scale = Vector3(0.1, 0.1, 0.1)
 							if prev_path:
 								prev_path.queue_free()
-							var res = PATHFINDER.call("Shortest_path", node.get_parent(), point.get_parent())
+							var res = PATHFINDER.call("Shortest_path", str(self.get_path_to(node.get_parent())), str(self.get_path_to(point.get_parent())))
 							point = null
 							var line = Path.new()
 							line.set_script(line_script)
@@ -212,8 +212,12 @@ func _input(event):
 							line.resolution = 10
 							line.width = 0.04
 							line.curve = Curve3D.new()
+							print("ZXC")
 							for p in res: 
-								line.curve.add_point(p.translation)
+								print(p)
+								print(get_node_or_null(p))
+								#line.curve.add_point(get_node(p).translation)
+							print("ZXC")
 							add_child(line)
 							prev_path = line
 						Mode.Remove_Line:
@@ -231,7 +235,7 @@ func _input(event):
 
 
 
-var line_script = load("res://Path.gd")
+var line_script = load("res://scripts/Path.gd")
 func add_line(node, point):
 	var line = Path.new()
 	line.set_script(line_script)
@@ -278,7 +282,7 @@ func _on_Load_pressed():
 	for c in $Model.get_children():
 		c.queue_free()
 	node_preview_floors = {}
-	call_deferred("parse_glb", "res://result.glb")
+	call_deferred("parse_glb", "res://resources/models/result.glb")
 
 	#$Control/FileDialog.popup_centered()
 

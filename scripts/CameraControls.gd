@@ -4,6 +4,7 @@ func _init():
 	call_deferred("set_floor", 1)
 
 func _process(_delta):
+	
 	if last_frame != Engine.get_frames_drawn() and focused: # new frame!
 		last_frame = Engine.get_frames_drawn()
 		if len(touches_data) == 1 and len(touches) == 1: # rotate if one finger
@@ -99,12 +100,6 @@ func _input(event):
 		touches_data.append(event)
 
 
-func _on_UI_focus_entered():
-	focused = true
-
-
-func _on_UI_focus_exited():
-	focused = false
 
 
 func _on_UI_mouse_entered():

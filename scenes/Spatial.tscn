@@ -1,7 +1,7 @@
 [gd_scene load_steps=48 format=2]
 
-[ext_resource path="res://scripts/Main.gd" type="Script" id=1]
-[ext_resource path="res://scripts/CameraControls.gd" type="Script" id=2]
+[ext_resource path="res://scripts/CameraControls.gd" type="Script" id=1]
+[ext_resource path="res://scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://scripts/UI.gd" type="Script" id=3]
 
 [sub_resource type="ProceduralSky" id=11]
@@ -605,11 +605,11 @@ surfaces/0 = {
 }
 
 [node name="Root" type="Spatial"]
-script = ExtResource( 1 )
+script = ExtResource( 2 )
 
 [node name="CameraOrigin" type="Spatial" parent="."]
 transform = Transform( 1, 0, 0, 0, -4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0 )
-script = ExtResource( 2 )
+script = ExtResource( 1 )
 
 [node name="Camera" type="Camera" parent="CameraOrigin"]
 transform = Transform( -1, 0, -1.50996e-07, 0, 1, 0, 1.50996e-07, 0, -1, 0, 0, -28 )
@@ -1934,8 +1934,6 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -10.1, 0, 1.6 )
 [node name="Empty182" type="Spatial" parent="result/8/8_NODES"]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, 2.6 )
 
-[connection signal="focus_entered" from="UI" to="CameraOrigin" method="_on_UI_focus_entered"]
-[connection signal="focus_exited" from="UI" to="CameraOrigin" method="_on_UI_focus_exited"]
 [connection signal="mouse_entered" from="UI" to="CameraOrigin" method="_on_UI_mouse_entered"]
 [connection signal="mouse_exited" from="UI" to="CameraOrigin" method="_on_UI_mouse_exited"]
 [connection signal="gui_input" from="UI/VSlider" to="." method="_on_VSlider_gui_input"]

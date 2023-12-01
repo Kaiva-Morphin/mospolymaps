@@ -27,7 +27,7 @@ export var global_coords : bool = false setget set_global_coords
 export var custom_material: Material setget set_material
 
 var geometry:MeshInstance = null
-var geometry_script = load("res://MeshInstance.gd")
+var geometry_script = load("res://scripts/MeshInstance.gd")
 
 func _enter_tree() -> void:
 	reload_geometry()

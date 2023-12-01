@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/GraphTest.gd" type="Script" id=1]
-[ext_resource path="res://TerminusTTF-4.49.3.ttf" type="DynamicFontData" id=2]
 
 [sub_resource type="ProceduralSky" id=9]
 sky_top_color = Color( 1, 1, 1, 1 )
@@ -13,16 +12,6 @@ ground_curve = 0.485029
 background_sky = SubResource( 9 )
 ambient_light_color = Color( 1, 1, 1, 1 )
 ambient_light_energy = 0.5
-
-[sub_resource type="DynamicFont" id=11]
-font_data = ExtResource( 2 )
-
-[sub_resource type="SpatialMaterial" id=12]
-
-[sub_resource type="TextMesh" id=13]
-material = SubResource( 12 )
-text = "tttt"
-font = SubResource( 11 )
 
 [node name="Spatial" type="Spatial"]
 script = ExtResource( 1 )
@@ -131,23 +120,19 @@ anchor_bottom = 1.5
 text = "ADD NEW GROUP"
 
 [node name="LineEdit" type="LineEdit" parent="Control"]
-anchor_left = 0.92
-anchor_top = 0.884
-anchor_right = 1.013
+anchor_left = 0.827
+anchor_top = 0.88
+anchor_right = 1.0
 anchor_bottom = 0.907
-margin_left = -8.0
-margin_top = -3.60004
-margin_right = -5.79999
-margin_bottom = -0.300049
+margin_left = -0.200012
+margin_top = -0.00012207
+margin_right = 2.0
+margin_bottom = 2.69995
 text = "1"
 
 [node name="Model" type="Spatial" parent="."]
 
 [node name="Paths" type="Spatial" parent="."]
-
-[node name="MeshInstance" type="MeshInstance" parent="."]
-transform = Transform( 1, 0, 0, 0, -0.200514, 0.979691, 0, -0.979691, -0.200514, 0, 0, 0 )
-mesh = SubResource( 13 )
 
 [connection signal="item_selected" from="Control/MODE" to="." method="_on_OptionButton_item_selected"]
 [connection signal="item_selected" from="Control/FLOOR" to="." method="_on_FLOOR_item_selected"]

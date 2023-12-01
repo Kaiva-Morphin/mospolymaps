@@ -46,23 +46,16 @@ margin_top = 0.199951
 margin_right = 2.2
 margin_bottom = -4.10004
 
-[node name="TextEdit" type="TextEdit" parent="Control"]
+[node name="GROUP_NAME" type="LineEdit" parent="Control"]
 visible = false
-anchor_top = 0.5
+anchor_left = 0.015
+anchor_top = 0.356
 anchor_right = 1.0
-anchor_bottom = 0.5
-rect_min_size = Vector2( 0, 50 )
-
-[node name="Button" type="Button" parent="Control/TextEdit"]
-anchor_left = 0.168
-anchor_top = 1.0
-anchor_right = 0.836
-anchor_bottom = 1.626
-margin_left = 0.199989
-margin_top = 5.0
-margin_right = -0.178009
-margin_bottom = -0.0200043
-text = "DONE"
+anchor_bottom = 0.436
+margin_top = 7.60001
+margin_right = -8.0
+margin_bottom = -0.400024
+placeholder_text = "NEW_GROUP_NAME"
 
 [node name="Load" type="Button" parent="Control"]
 anchor_left = 0.853
@@ -136,8 +129,10 @@ text = "1"
 
 [connection signal="item_selected" from="Control/MODE" to="." method="_on_OptionButton_item_selected"]
 [connection signal="item_selected" from="Control/FLOOR" to="." method="_on_FLOOR_item_selected"]
+[connection signal="text_entered" from="Control/GROUP_NAME" to="." method="_on_GROUP_NAME_text_entered"]
 [connection signal="pressed" from="Control/Load" to="." method="_on_Load_pressed"]
 [connection signal="pressed" from="Control/LoadTscn" to="." method="_on_LoadTscn_pressed"]
 [connection signal="pressed" from="Control/Save" to="." method="_on_Save_pressed"]
 [connection signal="file_selected" from="Control/FileDialog" to="." method="_on_FileDialog_file_selected"]
+[connection signal="pressed" from="Control/Groups/Add_Group" to="." method="_on_Add_Group_pressed"]
 [connection signal="text_entered" from="Control/LineEdit" to="." method="_on_LineEdit_text_entered"]

@@ -9,7 +9,7 @@ func _process(_delta):
 		last_frame = Engine.get_frames_drawn()
 		if len(touches_data) == 1 and len(touches) == 1: # rotate if one finger
 			var v = touches_data[0].relative * 0.002
-			if not abs(self.global_rotation.x + v.y) > deg2rad(90): # todo: fix (change position_based to velocity_based!)
+			if not self.global_rotation.x + v.y > deg2rad(90) and not self.global_rotation.x + v.y < -deg2rad(10): # todo: fix (change position_based to velocity_based!)
 				self.global_rotation.x += v.y
 			self.global_rotation.y += -v.x
 		
@@ -79,24 +79,16 @@ func set_floor(i): # todo: rewrite
 		else:
 			break
 
-func _on_Button_pressed(): # todo: add animation
-	self.translation = Vector3.ZERO
-	$Camera.translation = Vector3(0, 0, -28)
-	self.rotation = Vector3(10, 0, 0)
-
-
 
 
 
 func _input(event):
 	if event is InputEventScreenTouch:
-		print(focused)
 		if event.pressed:
 			touches[event.index] = event
 		else:
 			touches.erase(event.index)
 	if  event is InputEventScreenDrag:
-		
 		touches_data.append(event)
 
 

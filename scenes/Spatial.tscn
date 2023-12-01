@@ -1,8 +1,56 @@
-[gd_scene load_steps=48 format=2]
+[gd_scene load_steps=55 format=2]
 
 [ext_resource path="res://scripts/CameraControls.gd" type="Script" id=1]
 [ext_resource path="res://scripts/Main.gd" type="Script" id=2]
 [ext_resource path="res://scripts/UI.gd" type="Script" id=3]
+[ext_resource path="res://dynamicfont.tres" type="DynamicFont" id=4]
+
+[sub_resource type="ImageTexture" id=49]
+
+[sub_resource type="StyleBoxFlat" id=48]
+bg_color = Color( 0.654902, 0.654902, 0.654902, 1 )
+border_width_left = 15
+border_width_top = 15
+border_width_right = 15
+border_width_bottom = 15
+border_blend = true
+corner_radius_top_left = 20
+corner_radius_top_right = 20
+corner_radius_bottom_right = 20
+corner_radius_bottom_left = 20
+expand_margin_left = 5.0
+expand_margin_right = 5.0
+expand_margin_top = 5.0
+expand_margin_bottom = 5.0
+
+[sub_resource type="StyleBoxFlat" id=50]
+bg_color = Color( 0.247059, 0.247059, 0.247059, 1 )
+corner_radius_top_left = 15
+corner_radius_top_right = 15
+corner_radius_bottom_right = 15
+corner_radius_bottom_left = 15
+
+[sub_resource type="StyleBoxFlat" id=45]
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+corner_detail = 6
+
+[sub_resource type="StyleBoxFlat" id=47]
+bg_color = Color( 0, 0, 0, 0.192157 )
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id=46]
+bg_color = Color( 0.264, 0.264, 0.3, 1 )
+corner_radius_top_left = 5
+corner_radius_top_right = 5
+corner_radius_bottom_right = 5
+corner_radius_bottom_left = 5
+shadow_size = 2
 
 [sub_resource type="ProceduralSky" id=11]
 sky_top_color = Color( 1, 1, 1, 1 )
@@ -622,24 +670,129 @@ mouse_filter = 1
 script = ExtResource( 3 )
 
 [node name="VSlider" type="VSlider" parent="UI"]
-anchor_left = 0.843
-anchor_top = 0.198
+anchor_left = 0.933333
+anchor_top = 0.197778
 anchor_right = 1.005
-anchor_bottom = 0.771
-margin_left = 0.199982
-margin_top = 0.247986
-margin_bottom = -0.504028
+anchor_bottom = 0.77
+custom_icons/tick = SubResource( 49 )
+custom_icons/grabber_disabled = SubResource( 49 )
+custom_icons/grabber_highlight = SubResource( 49 )
+custom_icons/grabber = SubResource( 49 )
+custom_styles/slider = SubResource( 48 )
+custom_styles/grabber_area_highlight = SubResource( 50 )
+custom_styles/grabber_area = SubResource( 50 )
 min_value = 1.0
 max_value = 8.0
 value = 1.0
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
-[node name="Button" type="Button" parent="UI"]
-anchor_left = 0.898
+[node name="SearchBar" type="Control" parent="UI"]
 anchor_right = 1.0
-anchor_bottom = 0.052
-margin_left = 0.199951
-margin_bottom = -0.248001
-text = "ORIGIN"
+anchor_bottom = 1.0
+
+[node name="Panel" type="Panel" parent="UI/SearchBar"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Slider" type="Control" parent="UI/SearchBar/Panel"]
+anchor_right = 1.0
+anchor_bottom = 0.0355556
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="SliderButton" type="Panel" parent="UI/SearchBar/Panel/Slider"]
+anchor_left = 0.333333
+anchor_top = 0.5
+anchor_right = 0.666667
+anchor_bottom = 0.75
+custom_styles/panel = SubResource( 45 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="ScrollContainer" type="ScrollContainer" parent="UI/SearchBar/Panel"]
+anchor_left = 0.0266667
+anchor_top = 0.231111
+anchor_right = 0.98
+anchor_bottom = 0.977778
+custom_styles/bg = SubResource( 47 )
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="ButtonExample" type="Button" parent="UI/SearchBar/Panel/ScrollContainer"]
+visible = false
+margin_right = 572.0
+margin_bottom = 32.0
+size_flags_horizontal = 3
+
+[node name="From" type="LineEdit" parent="UI/SearchBar/Panel"]
+anchor_left = 0.0266667
+anchor_top = 0.0888889
+anchor_right = 0.98
+anchor_bottom = 0.118889
+custom_styles/read_only = SubResource( 46 )
+custom_styles/focus = SubResource( 46 )
+custom_styles/normal = SubResource( 46 )
+align = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="To" type="LineEdit" parent="UI/SearchBar/Panel"]
+anchor_left = 0.0266667
+anchor_top = 0.16
+anchor_right = 0.98
+anchor_bottom = 0.19
+custom_styles/read_only = SubResource( 46 )
+custom_styles/focus = SubResource( 46 )
+custom_styles/normal = SubResource( 46 )
+align = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Label" type="Label" parent="UI/SearchBar/Panel"]
+anchor_left = 0.04
+anchor_top = 0.0533333
+anchor_right = 0.96
+anchor_bottom = 0.0822222
+custom_fonts/font = ExtResource( 4 )
+text = "Откуда"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Label2" type="Label" parent="UI/SearchBar/Panel"]
+anchor_left = 0.04
+anchor_top = 0.124444
+anchor_right = 0.96
+anchor_bottom = 0.153333
+custom_fonts/font = ExtResource( 4 )
+text = "Куда"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Label3" type="Label" parent="UI/SearchBar/Panel"]
+anchor_left = 0.04
+anchor_top = 0.195556
+anchor_right = 0.96
+anchor_bottom = 0.224444
+custom_fonts/font = ExtResource( 4 )
+text = "Список"
+align = 1
+valign = 1
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource( 10 )
@@ -1937,4 +2090,7 @@ transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 0, 2.6 )
 [connection signal="mouse_entered" from="UI" to="CameraOrigin" method="_on_UI_mouse_entered"]
 [connection signal="mouse_exited" from="UI" to="CameraOrigin" method="_on_UI_mouse_exited"]
 [connection signal="gui_input" from="UI/VSlider" to="." method="_on_VSlider_gui_input"]
-[connection signal="pressed" from="UI/Button" to="CameraOrigin" method="_on_Button_pressed"]
+[connection signal="gui_input" from="UI/SearchBar" to="." method="_on_SearchBar_gui_input"]
+[connection signal="gui_input" from="UI/SearchBar/Panel" to="." method="_on_SearchBar_gui_input"]
+[connection signal="gui_input" from="UI/SearchBar/Panel/Slider" to="." method="_on_SearchBar_gui_input"]
+[connection signal="gui_input" from="UI/SearchBar/Panel/Slider/SliderButton" to="." method="_on_SearchBar_gui_input"]

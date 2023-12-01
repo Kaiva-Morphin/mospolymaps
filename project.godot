@@ -20,6 +20,7 @@ config/icon="res://icon.png"
 [autoload]
 
 PATHFINDER="*res://scripts/Pathfinder.cs"
+LOADER="*res://scripts/LOADER.gd"
 
 [display]
 
@@ -35,7 +36,7 @@ export=false
 
 [gui]
 
-theme/custom_font="res://resources/fonts/dynamicfont.tres"
+theme/custom_font="res://dynamicfont.tres"
 
 [input_devices]
 

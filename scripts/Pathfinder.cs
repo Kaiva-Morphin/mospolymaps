@@ -2,16 +2,15 @@ using Godot;
 using Godot.Collections;
 using System.Linq;
 
-
 public class WeightedSequence
 {
 	private class Node
 	{
-		public String Data { get; }
+		public string Data { get; }
 		public float Weight { get; }
 		public Node Next { get; set; }
 
-		public Node(String data, float weight)
+		public Node(string data, float weight)
 		{
 			Data = data;
 			Weight = weight;
@@ -21,7 +20,7 @@ public class WeightedSequence
 
 	private Node head;
 
-	public void Add_Element(String data, float weight)
+	public void Add_Element(string data, float weight)
 	{
 		Node newNode = new Node(data, weight);
 
@@ -44,9 +43,9 @@ public class WeightedSequence
 		}
 	}
 
-	public String Pop()
+	public string Pop()
 	{
-		String result = head.Data;
+		string result = head.Data;
 		head = head.Next;
 		return result;
 	}
@@ -58,62 +57,91 @@ public class WeightedSequence
 }
 
 public class GraphData{
-	public Dictionary<String, HashSet<String>> graph;
-	public Dictionary<(String, String), float> distances;
+	public Dictionary<string, Array<string>> graph;
+	public Dictionary<(string, string), float> distances;
 
-	public Dictionary<String, HashSet<String>> node_to_groups;
-	public Dictionary<String, HashSet<String>> group_to_node;
+	public Dictionary<string, Array<string>> node_to_groups;
+	public Dictionary<string, Array<string>> group_to_node;
 
 
 
 	
-	public String Prepare()
+	public string Prepare()
 	{
-		Array
-		// List<String> used like (String, String) because godot cant parse Tuple to json :sad_emoji:
-		// Same for HashSet<String>
-		var save_graph = new Dictionary<String, List<String>>{};
+		// Array<string> used like (string, string) because godot cant parse Tuple to json :sad_emoji:
+		// Same for Array<string>
+		var save_graph = new Dictionary<string, Array<string>>{};
 		foreach (var key in graph.Keys){
-			save_graph[key] = graph[key].ToList();
+			save_graph[key] = new Array<string>{};
+			foreach (var val in graph[key]){
+				save_graph[key].Append(val);
+			}
 		}
 
-		var save_distances = new Dictionary<List<String>, float>{};
+		var save_distances = new Dictionary<Array<string>, float>{};
 		foreach (var key in distances.Keys){
-			save_distances[new List<String>{key.Item1, key.Item2}] = distances[key];
+			save_distances[new Array<string>{key.Item1, key.Item2}] = distances[key];
 		}
 
-		var save_node_to_groups = new Dictionary<String, List<String>>{};
+		var save_node_to_groups = new Dictionary<string, Array<string>>{};
 		foreach (var key in node_to_groups.Keys){
-			save_node_to_groups[key] = node_to_groups[key].ToList();
+			save_node_to_groups[key] = new Array<string>{};
+			foreach (var val in node_to_groups[key]){
+				save_graph[key].Append(val);
+			}
 		}
 
-		var save_group_to_node = new Dictionary<String, List<String>>{};
+		var save_group_to_node = new Dictionary<string, Array<string>>{};
 		foreach (var key in group_to_node.Keys){
-			save_group_to_node[key] = group_to_node[key].ToList();
+			save_group_to_node[key] = new Array<string>{};
+			foreach (var val in group_to_node[key]){
+				save_graph[key].Append(val);
+			}
 		}
 
 		return JSON.Print(save_graph) + "\n" + JSON.Print(save_distances) + "\n" + JSON.Print(save_node_to_groups) + "\n" + JSON.Print(save_group_to_node);
 	}
-	public static GraphData Parse(String data)
+	public static GraphData Parse(string data)
 	{
+		var graph_data =  new GraphData{
+			graph = new Dictionary<string, Array<string>>{},
+			distances = new Dictionary<(string, string), float>{},
+			node_to_groups = new Dictionary<string, Array<string>>{},
+			group_to_node = new Dictionary<string, Array<string>> {}
+		};
 		var parsed = data.Split("\n");
-		var parsed_graph = JSON.Parse(parsed[0]).Result as Dictionary<String, List<String>>;
-		var parsed_distances = JSON.Parse(parsed[1]).Result as Dictionary<List<String>, float>;
-		var parsed_node_to_groups = JSON.Parse(parsed[2]).Result as Dictionary<String, List<String>>;
-		var parsed_group_to_node = JSON.Parse(parsed[3]).Result as Dictionary<String, List<String>>;
-		var graph_data =  new GraphData{};
-		foreach (var key in parsed_graph.Keys){
-			graph_data.graph[key] = new HashSet<String>(parsed_graph[key]);
+		var parsed_graph = JSON.Parse(parsed[0]).Result as Dictionary;
+		// pizdec
+		foreach (string key in parsed_graph.Keys){
+			var arr = parsed_graph[key] as Array;
+			var hashset = new Array<string>{};
+			foreach (string val in arr){
+				hashset.Add(val);
+			}
+			graph_data.graph[key] = hashset;
 		}
+
+		var parsed_distances = JSON.Parse(parsed[1]).Result as Dictionary;
 		foreach (var key in parsed_distances.Keys){
-			graph_data.distances[(key[0], key[1])] = parsed_distances[key];
+			GD.Print(key);
+			var keyd = key as Array;
+			//var a = keyd[0] as string;
+			//var b = keyd[1] as string;
+			//var val = parsed_distances[key];
+			//GD.Print(val);
+			//graph_data.distances[(key[0], key[1])] = parsed_distances[key];
 		}
-		foreach (var key in parsed_node_to_groups.Keys){
-			graph_data.node_to_groups[key] = new HashSet<String>(parsed_node_to_groups[key]);
-		}
-		foreach (var key in parsed_group_to_node.Keys){
-			graph_data.group_to_node[key] = new HashSet<String>(parsed_group_to_node[key]);
-		}
+		//var parsed_node_to_groups = JSON.Parse(parsed[2]).Result as Dictionary<string, Array<string>>;
+		//var parsed_group_to_node = JSON.Parse(parsed[3]).Result as Dictionary<string, Array<string>>;
+		//
+		//
+		
+		//foreach (var key in parsed_node_to_groups.Keys){
+		//	graph_data.node_to_groups[key] = new Array<string>(parsed_node_to_groups[key]);
+		//}
+		//foreach (var key in parsed_group_to_node.Keys){
+		//	graph_data.group_to_node[key] = new Array<string>(parsed_group_to_node[key]);
+		//}
 		
 		return graph_data;
 	}
@@ -122,90 +150,105 @@ public class GraphData{
 public class Pathfinder : Node
 {
 
-	private Dictionary<String, HashSet<String>> graph;
-	private Dictionary<(String, String), float> distances;
-	private Dictionary<String, HashSet<String>> node_to_groups;
-	private Dictionary<String, HashSet<String>> group_to_node;
+	private Dictionary<string, Array<string>> graph;
+	private System.Collections.Generic.Dictionary<(string, string), float> distances; // я просто хочу быть счастливым
+	private Dictionary<string, Array<string>> node_to_groups;
+	private Dictionary<string, Array<string>> group_to_node;
 	
-    public override void _Ready()
-    {
-        graph = new Dictionary<String, HashSet<String>> {};
-		distances = new Dictionary<(String, String), float> {};
-		node_to_groups = new Dictionary<String, HashSet<String>> {};
-		group_to_node = new Dictionary<String, HashSet<String>> {};
+	
+	public override void _Ready()
+	{
+		graph = new Dictionary<string, Array<string>> {};
+		distances = new System.Collections.Generic.Dictionary<(string, string), float> {};
+		node_to_groups = new Dictionary<string, Array<string>> {};
+		group_to_node = new Dictionary<string, Array<string>> {};
+	}
 
-		var original = new Dictionary<String, List<String>> {};
-		original.Add("1", new List<String>{"2"});
-		var encoded = JSON.Print(original);
-		var decoded = JSON.Parse(encoded).Result as Godot.Collections.Dictionary;
-		GD.Print(decoded);
-		using (var file = new File())
-		{
-			file.Open("SAVE", File.ModeFlags.Read);
-			var data = file.GetAsText();
-			file.Close();
-			var parsed_graph = JSON.Parse(data.Split("\n")[0]).Result;
-			GD.Print(parsed_graph as Dictionary<String, List<String>>);
+	public void Save(string filename){
+		// convert to godot's Array's
+		var data = new Array{};
+		
+		data.Add(graph);
+		var converted_distances = new Dictionary{};
+		foreach(var key in distances.Keys){
+			var a = key.Item1;
+			var b = key.Item2;
+			converted_distances.Add(new Array<string>{a, b}, distances[key]);
 		}
-		//Load("SAVE");
-    }
+		data.Add(converted_distances);
+		data.Add(node_to_groups);
+		data.Add(group_to_node);
+		
+		File file = new File();
+        file.Open(filename, File.ModeFlags.Write);
+        file.StoreVar(data);
+        file.Close();
+	}
 
-	public void Save(String filename){
-		using (var file = new File())
-		{
-            var data = new GraphData{
-				graph = graph,
-				distances = distances,
-				node_to_groups = node_to_groups,
-				group_to_node = group_to_node,
-			};
-			file.Open(filename, File.ModeFlags.Write);
-			file.StoreString(data.Prepare());
-			file.Close();
+	public void Load(string filename){
+		File f = new File();
+        f.Open(filename, File.ModeFlags.Read);
+        Array decoded = f.GetVar() as Array;
+        f.Close();
+		graph = new Dictionary<string, Array<string>>{};
+		var a_graph = decoded[0] as Dictionary;
+		foreach(string key in a_graph.Keys){
+			var arr = new Array<string>{};
+			foreach (string val in a_graph[key] as Array){
+				arr.Add(val);
+			}
+			graph[key] = arr;
+		}
+		
+		distances = new System.Collections.Generic.Dictionary<(string, string), float> {};
+		var a_dist = decoded[1] as Dictionary;
+		foreach(Array key in a_dist.Keys){
+			var val = (float)a_dist[key];
+			distances[(key[0] as string, key[1] as string)] = val;
+		}
+		
+		node_to_groups = new Dictionary<string, Array<string>> {};
+		var a_ntd = decoded[2] as Dictionary;
+		foreach(string key in a_ntd.Keys){
+			var arr = new Array<string>{};
+			foreach (string val in a_ntd[key] as Array){
+				arr.Add(val);
+			}
+			node_to_groups[key] = arr;
+		}
+
+		group_to_node = new Dictionary<string, Array<string>> {};
+		var a_tnd = decoded[3] as Dictionary;
+		foreach(string key in a_tnd.Keys){
+			var arr = new Array<string>{};
+			foreach (string val in a_tnd[key] as Array){
+				arr.Add(val);
+			}
+			group_to_node[key] = arr;
 		}
 	}
 
-	public void Load(String filename){
-		graph = new Dictionary<String, HashSet<String>> {};
-		distances = new Dictionary<(String, String), float> {};
-		node_to_groups = new Dictionary<String, HashSet<String>> {};
-		group_to_node = new Dictionary<String, HashSet<String>> {};
-		using (var file = new File())
-		{
-			file.Open(filename, File.ModeFlags.Read);
-			
-			var data = GraphData.Parse(file.GetAsText());
-			file.Close();
-			/*
-			graph = data.graph;
-			distances = data.distances;
-			node_to_groups = data.node_to_groups;
-			group_to_node = data.group_to_node;*/
-			
-		}
+	public string[] Get_all_groups(){
+		return group_to_node.Keys.ToArray<string>();
 	}
-
-	public String[] Get_all_groups(){
-		return group_to_node.Keys.ToArray<String>();
-	}
-	public void Set_group(String node, String name){ // todo: check. may be incorrect
+	public void Set_group(string node, string name){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			if (!node_to_groups[node].Contains(name)){
 				node_to_groups[node].Add(name);
 			}
 		} else {
-			node_to_groups[node] = new HashSet<String> {name};
+			node_to_groups[node] = new Array<string> {name};
 		}
 		if (group_to_node.ContainsKey(name)){
 			if (!group_to_node[name].Contains(node)){
 				group_to_node[name].Add(node);
 			}
 		} else {
-			group_to_node[name] = new HashSet<String> {node};
+			group_to_node[name] = new Array<string> {node};
 		}
 	}
 
-	public void Clear_groups(String node){ // todo: check. may be incorrect
+	public void Clear_groups(string node){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			var groups = node_to_groups[node];
 			foreach (var group in groups){
@@ -219,7 +262,7 @@ public class Pathfinder : Node
 		}
 	}
 
-	public void Remove_group(String node, String name){ // todo: check. may be incorrect
+	public void Remove_group(string node, string name){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			node_to_groups[node].Remove(name);
 		}
@@ -228,20 +271,20 @@ public class Pathfinder : Node
 		}
 	}
 
-	public bool In_group(String node, String name){ // todo: check. may be incorrect
+	public bool In_group(string node, string name){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			return node_to_groups[node].Contains(name);
 		}
 		return false;
 	}
 
-	public void Register_bind(String start, String end, float distance){ // todo: check. may be incorrect
+	public void Register_bind(string start, string end, float distance){ // todo: check. may be incorrect
 		if (graph.ContainsKey(start)){
 			if (!graph[start].Contains(end)){
 				graph[start].Add(end);
 			}
 		} else {
-			graph.Add(start, new HashSet<String> {end});
+			graph.Add(start, new Array<string> {end});
 		}
 		if (!distances.ContainsKey((start, end))){
 			distances.Add((start, end), distance);
@@ -253,14 +296,14 @@ public class Pathfinder : Node
 				graph[end].Add(start);
 			}
 		} else {
-			graph.Add(end, new HashSet<String> {start});
+			graph.Add(end, new Array<string> {start});
 		}
 		if (!distances.ContainsKey((end, start))){
 			distances.Add((end, start), distance);
 		}
 	}
 
-	public void Erase_point(String point){
+	public void Erase_point(string point){
 		if (graph.ContainsKey(point)){
 			foreach (var end in graph[point]){
 				if (graph[end].Contains(point)){
@@ -277,7 +320,7 @@ public class Pathfinder : Node
 		}
 	}
 
-	public void Break_bind(String start, String end){ // todo: check. may be incorrect
+	public void Break_bind(string start, string end){ // todo: check. may be incorrect
 		if (graph.ContainsKey(start)){
 			if (graph[start].Contains(end)){
 				graph[start].Remove(end);
@@ -295,21 +338,21 @@ public class Pathfinder : Node
 			distances.Remove((end, start));
 		}
 	}
-	public List<String> Shortest_path(String startVertex, String endVertex) // todo: check. may be incorrect
+	public Array<string> Shortest_path(string startVertex, string endVertex) // todo: check. may be incorrect
 	{
 		if (!(graph.ContainsKey(startVertex) && graph.ContainsKey(endVertex))){
-			return new List<String> {};
+			return new Array<string> {};
 		}
 		WeightedSequence sequence = new WeightedSequence();
-		Dictionary<String, String> parent = new Dictionary<String, String>();
-		Dictionary<String, float> visited = new Dictionary<String, float>();
+		Dictionary<string, string> parent = new Dictionary<string, string>();
+		Dictionary<string, float> visited = new Dictionary<string, float>();
 
 		sequence.Add_Element(startVertex, 0);
 		visited[startVertex] = 0;
 		
 		while (!sequence.IsEmpty())
 		{
-			String currentVertex = sequence.Pop();
+			string currentVertex = sequence.Pop();
 			if (currentVertex == endVertex){
 					endVertex = currentVertex;
 					break;
@@ -333,10 +376,10 @@ public class Pathfinder : Node
 		}
 
 		// Reconstruct the path
-		List<String> shortestPath = new List<String>();
-		String tempVertex = endVertex;
+		Array<string> shortestPath = new Array<string>();
+		string tempVertex = endVertex;
 		if (!parent.ContainsKey(tempVertex)){
-			return new List<String> {};
+			return new Array<string> {};
 		}
 		while (tempVertex != startVertex)
 		{
@@ -350,21 +393,21 @@ public class Pathfinder : Node
 		return shortestPath;
 	}
 	
-	public List<String> Shortest_path_group(String startVertex, String endGroup) // todo: check. may be incorrect
+	public Array<string> Shortest_path_group(string startVertex, string endGroup) // todo: check. may be incorrect
 	{
 		if (!graph.ContainsKey(startVertex)){
-			return new List<String> {};
+			return new Array<string> {};
 		}
 		WeightedSequence sequence = new WeightedSequence();
-		Dictionary<String, String> parent = new Dictionary<String, String>();
-		Dictionary<String, float> visited = new Dictionary<String, float>();
+		Dictionary<string, string> parent = new Dictionary<string, string>();
+		Dictionary<string, float> visited = new Dictionary<string, float>();
 
 		sequence.Add_Element(startVertex, 0);
 		visited[startVertex] = 0;
-		String endVertex = null;
+		string endVertex = null;
 		while (!sequence.IsEmpty())
 		{
-			String currentVertex = sequence.Pop();
+			string currentVertex = sequence.Pop();
 			if (In_group(currentVertex, endGroup)){
 					endVertex = currentVertex;
 					break;
@@ -387,13 +430,13 @@ public class Pathfinder : Node
 			}
 		}
 		if (endVertex == null){ // ?
-			return new List<String> {};
+			return new Array<string> {};
 		}
 		// Reconstruct the path
-		List<String> shortestPath = new List<String>();
-		String tempVertex = endVertex;
+		Array<string> shortestPath = new Array<string>();
+		string tempVertex = endVertex;
 		if (!parent.ContainsKey(tempVertex)){ // ?
-			return new List<String> {};
+			return new Array<string> {};
 		}
 		while (tempVertex != startVertex)
 		{

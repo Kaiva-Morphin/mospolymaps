@@ -35,11 +35,9 @@ func parse_glb(path): # todo: autopath using raycasts
 		scene.remove_child(c)
 		$Model.add_child(c)
 	
-	
 	var mat = SpatialMaterial.new()
 	mat.flags_transparent = true
 	mat.albedo_color.a = 0.5
-	
 	
 	building_base = $Model.get_node("FLOOR")
 	building_roof = $Model.get_node("ROOF")
@@ -54,6 +52,10 @@ func parse_glb(path): # todo: autopath using raycasts
 			for to_materialize in node.get_children():
 				if to_materialize is MeshInstance:
 					to_materialize.material_override = mat
+					if "LADDER" in to_materialize.name:
+						groups.append(to_materialize.name)
+					
+					
 			building_floors.append(node)
 			$Control/FLOOR.add_item("Floor" + str(i), i)
 		else:
@@ -73,7 +75,6 @@ func parse_glb(path): # todo: autopath using raycasts
 	collision.scale = Vector3(0.1, 0.1, 0.1)
 	collision.shape = BoxShape.new()
 	area.add_child(collision)
-	
 	
 	for key in node_preview_floors.keys():
 		for node in node_preview_floors[key]:
@@ -97,7 +98,7 @@ func parse_glb(path): # todo: autopath using raycasts
 			ar.add_child(unique_mesh)
 			var label = MeshInstance.new()
 			label.name = "LABEL"
-			label.rotation.x = PI / 2
+			label.rotation.x = -PI / 2
 			label.translation.y = 1
 			label.mesh = TextMesh.new()
 			label.mesh.pixel_size = 0.008
@@ -112,6 +113,7 @@ func parse_glb(path): # todo: autopath using raycasts
 	mesh.queue_free()
 	area.queue_free()
 	show_floor(1)
+	update_groups()
 
 
 func show_floor(i):
@@ -168,13 +170,15 @@ func _input(event):
 			if point == null:
 				match current_mode:
 					Mode.Clear:
-						node.get_node("MESH").material_override.albedo_color = Color.red
+						node.get_node("LABEL").mesh.text = ""
+						var path = str(self.get_path_to(node))
+						PATHFINDER.call("Clear_groups", path )
 						point = null
 					Mode.Set_Endpoint:
-						node.get_node("LABEL").mesh.text = "333333"
-						point = null
-					Mode.Set_Ladder:
-						node.get_node("MESH").material_override.albedo_color = Color.deeppink
+						var group_name = $Control/Groups.get_item_text($Control/Groups.selected)
+						node.get_node("LABEL").mesh.text += "\n" + group_name
+						var path = str(self.get_path_to(node))
+						PATHFINDER.call("Set_group", path, group_name )
 						point = null
 					Mode.Add_Point:
 						print("todo!")
@@ -184,7 +188,6 @@ func _input(event):
 					_:
 						node.get_node("MESH").scale = Vector3(0.15, 0.15, 0.15)
 						point = node
-						print(str(self.get_path_to(node)))
 			else:
 				if point != node:
 					match current_mode:
@@ -212,18 +215,14 @@ func _input(event):
 							line.resolution = 10
 							line.width = 0.04
 							line.curve = Curve3D.new()
-							print("ZXC")
 							for p in res: 
-								print(p)
-								print(get_node_or_null(p))
-								#line.curve.add_point(get_node(p).translation)
-							print("ZXC")
+								line.curve.add_point(get_node(p).translation)
 							add_child(line)
 							prev_path = line
 						Mode.Remove_Line:
 							point.get_node("MESH").scale = Vector3(0.1, 0.1, 0.1)
 							node.get_node("MESH").scale = Vector3(0.1, 0.1, 0.1)
-							var res = PATHFINDER.call("Break_bind", node.get_parent(), point.get_parent())
+							var res = PATHFINDER.call("Break_bind", str(self.get_path_to(node.get_parent())), str(self.get_path_to(point.get_parent())))
 							remove_line(node.get_parent(), point.get_parent())
 							point = null
 		else:
@@ -260,7 +259,11 @@ func remove_line(node, point):
 		floor_lines[i].erase([point, node])
 	else:
 		pass
-	
+
+func update_groups():
+	$Control/Groups.clear()
+	for g in groups:
+		$Control/Groups.add_item(g)
 
 func _on_OptionButton_item_selected(index):
 	match index:
@@ -313,3 +316,19 @@ func _on_Save_pressed():
 
 func _on_LoadTscn_pressed():
 	PATHFINDER.call("Load", "data")
+
+
+func _on_Add_Group_pressed():
+	if !$Control/GROUP_NAME.visible:
+		$Control/GROUP_NAME.show()
+		$Control/GROUP_NAME.grab_focus()
+	else:
+		$Control/GROUP_NAME.hide()
+
+
+func _on_GROUP_NAME_text_entered(new_text):
+	groups.append(new_text)
+	$Control/GROUP_NAME.text = ""
+	$Control/GROUP_NAME.hide()
+	update_groups()
+	$Control/Groups.select($Control/Groups.get_item_count() - 1)

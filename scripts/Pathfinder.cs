@@ -1,6 +1,6 @@
 using Godot;
-using System;
-using System.Collections.Generic;
+using Godot.Collections;
+using System.Linq;
 
 
 public class WeightedSequence
@@ -58,49 +58,99 @@ public class WeightedSequence
 }
 
 public class GraphData{
-	public Dictionary<String, List<String>> graph;
-	public Dictionary<List<String>, float> distances; // List<String> used like (String, String) because godot cant parse Tuple to json(((
+	public Dictionary<String, HashSet<String>> graph;
+	public Dictionary<(String, String), float> distances;
 
-	public Dictionary<String, List<String>> node_to_groups;
-	public Dictionary<String, List<String>> group_to_node;
+	public Dictionary<String, HashSet<String>> node_to_groups;
+	public Dictionary<String, HashSet<String>> group_to_node;
 
 
 
 	
 	public String Prepare()
 	{
-		return JSON.Print(graph) + "\n" + JSON.Print(distances) + "\n" + JSON.Print(node_to_groups) + "\n" + JSON.Print(group_to_node);
+		Array
+		// List<String> used like (String, String) because godot cant parse Tuple to json :sad_emoji:
+		// Same for HashSet<String>
+		var save_graph = new Dictionary<String, List<String>>{};
+		foreach (var key in graph.Keys){
+			save_graph[key] = graph[key].ToList();
+		}
+
+		var save_distances = new Dictionary<List<String>, float>{};
+		foreach (var key in distances.Keys){
+			save_distances[new List<String>{key.Item1, key.Item2}] = distances[key];
+		}
+
+		var save_node_to_groups = new Dictionary<String, List<String>>{};
+		foreach (var key in node_to_groups.Keys){
+			save_node_to_groups[key] = node_to_groups[key].ToList();
+		}
+
+		var save_group_to_node = new Dictionary<String, List<String>>{};
+		foreach (var key in group_to_node.Keys){
+			save_group_to_node[key] = group_to_node[key].ToList();
+		}
+
+		return JSON.Print(save_graph) + "\n" + JSON.Print(save_distances) + "\n" + JSON.Print(save_node_to_groups) + "\n" + JSON.Print(save_group_to_node);
 	}
 	public static GraphData Parse(String data)
 	{
-		var parsed = data.Split();
-		return new GraphData{
-			graph = JSON.Parse(parsed[0]).Result as Dictionary<String, List<String>>,
-			distances = JSON.Parse(parsed[1]).Result as Dictionary<List<String>, float>,
-			node_to_groups = JSON.Parse(parsed[2]).Result as Dictionary<String, List<String>>,
-			group_to_node = JSON.Parse(parsed[3]).Result as Dictionary<String, List<String>>,
-		};
+		var parsed = data.Split("\n");
+		var parsed_graph = JSON.Parse(parsed[0]).Result as Dictionary<String, List<String>>;
+		var parsed_distances = JSON.Parse(parsed[1]).Result as Dictionary<List<String>, float>;
+		var parsed_node_to_groups = JSON.Parse(parsed[2]).Result as Dictionary<String, List<String>>;
+		var parsed_group_to_node = JSON.Parse(parsed[3]).Result as Dictionary<String, List<String>>;
+		var graph_data =  new GraphData{};
+		foreach (var key in parsed_graph.Keys){
+			graph_data.graph[key] = new HashSet<String>(parsed_graph[key]);
+		}
+		foreach (var key in parsed_distances.Keys){
+			graph_data.distances[(key[0], key[1])] = parsed_distances[key];
+		}
+		foreach (var key in parsed_node_to_groups.Keys){
+			graph_data.node_to_groups[key] = new HashSet<String>(parsed_node_to_groups[key]);
+		}
+		foreach (var key in parsed_group_to_node.Keys){
+			graph_data.group_to_node[key] = new HashSet<String>(parsed_group_to_node[key]);
+		}
+		
+		return graph_data;
 	}
 }
 
 public class Pathfinder : Node
 {
-	// todo: change List -> HashSet (for optimization, but HashSet can't be converted to JSON unsing JSON.Print...)
-	private Dictionary<String, List<String>> graph;
-	private Dictionary<List<String>, float> distances;// List<String> used like (String, String) because godot cant parse Tuple to json :sad_emoji:
 
-	private Dictionary<String, List<String>> node_to_groups;
-	private Dictionary<String, List<String>> group_to_node;
+	private Dictionary<String, HashSet<String>> graph;
+	private Dictionary<(String, String), float> distances;
+	private Dictionary<String, HashSet<String>> node_to_groups;
+	private Dictionary<String, HashSet<String>> group_to_node;
 	
     public override void _Ready()
     {
-        graph = new Dictionary<String, List<String>> {};
-		distances = new Dictionary<List<String>, float> {};
-		node_to_groups = new Dictionary<String, List<String>> {};
-		group_to_node = new Dictionary<String, List<String>> {};
+        graph = new Dictionary<String, HashSet<String>> {};
+		distances = new Dictionary<(String, String), float> {};
+		node_to_groups = new Dictionary<String, HashSet<String>> {};
+		group_to_node = new Dictionary<String, HashSet<String>> {};
+
+		var original = new Dictionary<String, List<String>> {};
+		original.Add("1", new List<String>{"2"});
+		var encoded = JSON.Print(original);
+		var decoded = JSON.Parse(encoded).Result as Godot.Collections.Dictionary;
+		GD.Print(decoded);
+		using (var file = new File())
+		{
+			file.Open("SAVE", File.ModeFlags.Read);
+			var data = file.GetAsText();
+			file.Close();
+			var parsed_graph = JSON.Parse(data.Split("\n")[0]).Result;
+			GD.Print(parsed_graph as Dictionary<String, List<String>>);
+		}
+		//Load("SAVE");
     }
 
-	public void Save(){
+	public void Save(String filename){
 		using (var file = new File())
 		{
             var data = new GraphData{
@@ -109,48 +159,49 @@ public class Pathfinder : Node
 				node_to_groups = node_to_groups,
 				group_to_node = group_to_node,
 			};
-			file.Open("SAVE.save", File.ModeFlags.Write);
+			file.Open(filename, File.ModeFlags.Write);
 			file.StoreString(data.Prepare());
 			file.Close();
 		}
 	}
 
-	public void Load(){
-		graph = new Dictionary<String, List<String>> {};
-		distances = new Dictionary<List<String>, float> {};
-		node_to_groups = new Dictionary<String, List<String>> {};
-		group_to_node = new Dictionary<String, List<String>> {};
+	public void Load(String filename){
+		graph = new Dictionary<String, HashSet<String>> {};
+		distances = new Dictionary<(String, String), float> {};
+		node_to_groups = new Dictionary<String, HashSet<String>> {};
+		group_to_node = new Dictionary<String, HashSet<String>> {};
 		using (var file = new File())
 		{
-			file.Open("SAVE.save", File.ModeFlags.Read);
+			file.Open(filename, File.ModeFlags.Read);
 			
-			var data = GraphData.Parse(file.ToString());
+			var data = GraphData.Parse(file.GetAsText());
 			file.Close();
-			//var recovered = DataPack2.FromJson(data);
-			//GD.Print(recovered);
-			
+			/*
 			graph = data.graph;
 			distances = data.distances;
 			node_to_groups = data.node_to_groups;
-			group_to_node = data.group_to_node;
+			group_to_node = data.group_to_node;*/
 			
 		}
 	}
 
+	public String[] Get_all_groups(){
+		return group_to_node.Keys.ToArray<String>();
+	}
 	public void Set_group(String node, String name){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			if (!node_to_groups[node].Contains(name)){
 				node_to_groups[node].Add(name);
 			}
 		} else {
-			node_to_groups[node] = new List<String> {name};
+			node_to_groups[node] = new HashSet<String> {name};
 		}
 		if (group_to_node.ContainsKey(name)){
 			if (!group_to_node[name].Contains(node)){
 				group_to_node[name].Add(node);
 			}
 		} else {
-			group_to_node[name] = new List<String> {node};
+			group_to_node[name] = new HashSet<String> {node};
 		}
 	}
 
@@ -190,10 +241,10 @@ public class Pathfinder : Node
 				graph[start].Add(end);
 			}
 		} else {
-			graph.Add(start, new List<String> {end});
+			graph.Add(start, new HashSet<String> {end});
 		}
-		if (!distances.ContainsKey(new List<String>{start, end})){
-			distances.Add(new List<String>{start, end}, distance);
+		if (!distances.ContainsKey((start, end))){
+			distances.Add((start, end), distance);
 		}
 		
 
@@ -202,10 +253,10 @@ public class Pathfinder : Node
 				graph[end].Add(start);
 			}
 		} else {
-			graph.Add(end, new List<String> {start});
+			graph.Add(end, new HashSet<String> {start});
 		}
-		if (!distances.ContainsKey(new List<String>{end, start})){
-			distances.Add(new List<String>{end, start}, distance);
+		if (!distances.ContainsKey((end, start))){
+			distances.Add((end, start), distance);
 		}
 	}
 
@@ -215,11 +266,11 @@ public class Pathfinder : Node
 				if (graph[end].Contains(point)){
 					graph[end].Remove(point);
 				}
-				if (distances.ContainsKey(new List<String>{point, end})){
-					distances.Remove(new List<String>{point, end});
+				if (distances.ContainsKey((point, end))){
+					distances.Remove((point, end));
 				}
-				if (distances.ContainsKey(new List<String>{end, point})){
-					distances.Remove(new List<String>{end, point});
+				if (distances.ContainsKey((end, point))){
+					distances.Remove((end, point));
 				}
 			}
 			graph.Remove(point);
@@ -237,11 +288,11 @@ public class Pathfinder : Node
 				graph[end].Remove(start);
 			}
 		}
-		if (distances.ContainsKey(new List<String>{start, end})){
-			distances.Remove(new List<String>{start, end});
+		if (distances.ContainsKey((start, end))){
+			distances.Remove((start, end));
 		}
-		if (distances.ContainsKey(new List<String>{end, start})){
-			distances.Remove(new List<String>{end, start});
+		if (distances.ContainsKey((end, start))){
+			distances.Remove((end, start));
 		}
 	}
 	public List<String> Shortest_path(String startVertex, String endVertex) // todo: check. may be incorrect
@@ -249,15 +300,12 @@ public class Pathfinder : Node
 		if (!(graph.ContainsKey(startVertex) && graph.ContainsKey(endVertex))){
 			return new List<String> {};
 		}
-		GD.Print(startVertex);
-		GD.Print(endVertex);
 		WeightedSequence sequence = new WeightedSequence();
 		Dictionary<String, String> parent = new Dictionary<String, String>();
 		Dictionary<String, float> visited = new Dictionary<String, float>();
 
 		sequence.Add_Element(startVertex, 0);
 		visited[startVertex] = 0;
-		GD.Print("SEQ");
 		
 		while (!sequence.IsEmpty())
 		{
@@ -268,7 +316,7 @@ public class Pathfinder : Node
 			}
 			foreach (var neighbor in graph[currentVertex])
 			{
-				float dist = visited[currentVertex] + distances[new List<String>{currentVertex, neighbor}];
+				float dist = visited[currentVertex] + distances[(currentVertex, neighbor)];
 				if (!visited.ContainsKey(neighbor))
 				{
 					sequence.Add_Element(neighbor, dist);
@@ -323,7 +371,7 @@ public class Pathfinder : Node
 			}
 			foreach (var neighbor in graph[currentVertex])
 			{
-				float dist = visited[currentVertex] + distances[new List<String>{currentVertex, neighbor}];
+				float dist = visited[currentVertex] + distances[(currentVertex, neighbor)];
 				if (!visited.ContainsKey(neighbor))
 				{
 					sequence.Add_Element(neighbor, dist);

@@ -1,6 +1,7 @@
 using Godot;
 using Godot.Collections;
 using System.Linq;
+using System.Runtime.InteropServices;
 
 public class WeightedSequence
 {
@@ -226,25 +227,44 @@ public class Pathfinder : Node
 			}
 			group_to_node[key] = arr;
 		}
+		GD.Print(Get_all_groups());
 	}
 
-	public string[] Get_all_groups(){
-		return group_to_node.Keys.ToArray<string>();
+	public Array Get_all_groups(){
+		var res = new Array{};
+		GD.Print(group_to_node.Keys);
+		foreach (Array<string> groups in node_to_groups.Values){
+			foreach(string name in groups){
+				if (!res.Contains(name)){
+					res.Add(name);
+				}
+			}
+		}
+		return res;
 	}
+
+	public Array<string> Get_group_members(string group_name){
+		return group_to_node[group_name];
+	}
+
 	public void Set_group(string node, string name){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			if (!node_to_groups[node].Contains(name)){
 				node_to_groups[node].Add(name);
+				GD.Print("set group " + name + " for " + node);
 			}
 		} else {
 			node_to_groups[node] = new Array<string> {name};
+			GD.Print("set group " + name + " for " + node);
 		}
 		if (group_to_node.ContainsKey(name)){
 			if (!group_to_node[name].Contains(node)){
 				group_to_node[name].Add(node);
+				GD.Print("set rev group " + name + " for " + node);
 			}
 		} else {
 			group_to_node[name] = new Array<string> {node};
+			GD.Print("set rev group " + name + " for " + node);
 		}
 	}
 
@@ -255,19 +275,23 @@ public class Pathfinder : Node
 				if (group_to_node.ContainsKey(group)){
 					if (group_to_node[group].Contains(node)){
 						group_to_node[group].Remove(node);
+						GD.Print("clear group " + group + " for " + node);
 					}
 				}
 			}
-			node_to_groups.Remove(node);
+			GD.Print("clear group " + node );
+			group_to_node.Remove(node);
 		}
 	}
 
 	public void Remove_group(string node, string name){ // todo: check. may be incorrect
 		if (node_to_groups.ContainsKey(node)){
 			node_to_groups[node].Remove(name);
+			GD.Print("removed node " + node + " from " + name);
 		}
 		if (group_to_node.ContainsKey(name)){
 			group_to_node[name].Remove(node);
+			GD.Print("removed node " + node + " from " + name);
 		}
 	}
 
@@ -282,9 +306,11 @@ public class Pathfinder : Node
 		if (graph.ContainsKey(start)){
 			if (!graph[start].Contains(end)){
 				graph[start].Add(end);
+				GD.Print("added bind " + start + " with " + end);
 			}
 		} else {
 			graph.Add(start, new Array<string> {end});
+			GD.Print("added bind " + start + " with " + end);
 		}
 		if (!distances.ContainsKey((start, end))){
 			distances.Add((start, end), distance);
@@ -294,9 +320,11 @@ public class Pathfinder : Node
 		if (graph.ContainsKey(end)){
 			if (!graph[end].Contains(start)){
 				graph[end].Add(start);
+				GD.Print("added bind " + end + " with " + start);
 			}
 		} else {
 			graph.Add(end, new Array<string> {start});
+			GD.Print("added bind " + end + " with " + start);
 		}
 		if (!distances.ContainsKey((end, start))){
 			distances.Add((end, start), distance);
@@ -308,6 +336,7 @@ public class Pathfinder : Node
 			foreach (var end in graph[point]){
 				if (graph[end].Contains(point)){
 					graph[end].Remove(point);
+					GD.Print("removed bind " + end + " with " + point);
 				}
 				if (distances.ContainsKey((point, end))){
 					distances.Remove((point, end));
@@ -317,6 +346,7 @@ public class Pathfinder : Node
 				}
 			}
 			graph.Remove(point);
+			GD.Print("removed binds of " + point);
 		}
 	}
 
@@ -324,11 +354,13 @@ public class Pathfinder : Node
 		if (graph.ContainsKey(start)){
 			if (graph[start].Contains(end)){
 				graph[start].Remove(end);
+				GD.Print("removed bind " + start + " with " + end);
 			}
 		}
 		if (graph.ContainsKey(end)){
 			if (graph[end].Contains(start)){
 				graph[end].Remove(start);
+				GD.Print("removed bind " + end + " with " + start);
 			}
 		}
 		if (distances.ContainsKey((start, end))){
@@ -395,6 +427,7 @@ public class Pathfinder : Node
 	
 	public Array<string> Shortest_path_group(string startVertex, string endGroup) // todo: check. may be incorrect
 	{
+		GD.Print(graph);
 		if (!graph.ContainsKey(startVertex)){
 			return new Array<string> {};
 		}

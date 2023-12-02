@@ -60,9 +60,9 @@ var focused = false
 #		touches_data.append(event)
 
 func set_floor(i): # todo: rewrite
-	get_parent().get_node("result/ROOF").hide()
+	get_parent().get_node("Model/ROOF").hide()
 	for n in range(1, 100):
-		var res = get_parent().get_node_or_null("result/" + str(n))
+		var res = get_parent().get_node_or_null("Model/" + str(n))
 		if res:
 			if n < i:
 				res.show()

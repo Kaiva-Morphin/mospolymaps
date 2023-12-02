@@ -171,13 +171,13 @@ func _input(event):
 				match current_mode:
 					Mode.Clear:
 						node.get_node("LABEL").mesh.text = ""
-						var path = str(self.get_path_to(node))
+						var path = str(self.get_path_to(node.get_parent()))
 						PATHFINDER.call("Clear_groups", path )
 						point = null
 					Mode.Set_Endpoint:
 						var group_name = $Control/Groups.get_item_text($Control/Groups.selected)
 						node.get_node("LABEL").mesh.text += "\n" + group_name
-						var path = str(self.get_path_to(node))
+						var path = str(self.get_path_to(node.get_parent()))
 						PATHFINDER.call("Set_group", path, group_name )
 						point = null
 					Mode.Add_Point:

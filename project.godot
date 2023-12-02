@@ -11,7 +11,7 @@ config_version=4
 [application]
 
 config/name="mospolymaps"
-run/main_scene="res://scenes/Spatial.tscn"
+run/main_scene="res://scenes/App.tscn"
 boot_splash/image="res://resources/mospolytech-logo-white.png"
 boot_splash/fullsize=false
 boot_splash/bg_color=Color( 0.247059, 0.247059, 0.247059, 1 )
@@ -20,7 +20,6 @@ config/icon="res://icon.png"
 [autoload]
 
 PATHFINDER="*res://scripts/Pathfinder.cs"
-LOADER="*res://scripts/LOADER.gd"
 
 [display]
 
@@ -36,7 +35,7 @@ export=false
 
 [gui]
 
-theme/custom_font="res://dynamicfont.tres"
+theme/custom_font="res://resources/fonts/dynamicfont.tres"
 
 [input_devices]
 

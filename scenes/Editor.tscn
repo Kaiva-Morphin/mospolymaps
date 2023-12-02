@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=2]
 
-[ext_resource path="res://scripts/GraphTest.gd" type="Script" id=1]
+[ext_resource path="res://scripts/Editor.gd" type="Script" id=1]
 
 [sub_resource type="ProceduralSky" id=9]
 sky_top_color = Color( 1, 1, 1, 1 )
@@ -38,13 +38,12 @@ items = [ "Make_Line", null, false, 0, null, "Remove_Line", null, false, 1, null
 selected = 0
 
 [node name="FLOOR" type="OptionButton" parent="Control"]
-anchor_top = 0.862
-anchor_right = 0.303
-anchor_bottom = 0.939
-margin_left = 8.0
-margin_top = 0.199951
-margin_right = 2.2
-margin_bottom = -4.10004
+anchor_top = 0.924444
+anchor_right = 0.293333
+anchor_bottom = 0.996667
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="GROUP_NAME" type="LineEdit" parent="Control"]
 visible = false
@@ -58,37 +57,37 @@ margin_bottom = -0.400024
 placeholder_text = "NEW_GROUP_NAME"
 
 [node name="Load" type="Button" parent="Control"]
-anchor_left = 0.853
-anchor_right = 1.0
-anchor_bottom = 0.071
-margin_left = 0.199982
-margin_right = 1.0
-margin_bottom = 0.0999985
+anchor_left = 0.786667
+anchor_top = 0.08
+anchor_right = 1.00667
+anchor_bottom = 0.151111
+margin_left = 3.05176e-05
 rect_pivot_offset = Vector2( -192, 40 )
-text = "LOAD"
+text = "LOAD MODEL"
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="LoadTscn" type="Button" parent="Control"]
-anchor_left = 0.853
-anchor_top = 0.142
-anchor_right = 1.0
-anchor_bottom = 0.213
-margin_left = 0.199982
-margin_top = 0.199997
-margin_bottom = -1.70001
+anchor_left = 0.48
+anchor_right = 0.74
+anchor_bottom = 0.0688889
 rect_pivot_offset = Vector2( 24, 64 )
-text = "LOAD TSCN"
+text = "LOAD WEIGHTS"
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="Save" type="Button" parent="Control"]
-anchor_left = 0.853
-anchor_top = 0.071
-anchor_right = 1.0
-anchor_bottom = 0.142
-margin_left = 0.199982
-margin_top = 0.0999985
-margin_right = 1.0
-margin_bottom = 0.199997
+anchor_left = 0.746667
+anchor_right = 1.00667
+anchor_bottom = 0.0711111
+margin_left = 3.05176e-05
 rect_pivot_offset = Vector2( 24, 64 )
-text = "SAVE"
+text = "SAVE WEIGHTS"
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="FileDialog" type="FileDialog" parent="Control"]
 anchor_right = 1.0
@@ -113,15 +112,14 @@ anchor_bottom = 1.5
 text = "ADD NEW GROUP"
 
 [node name="LineEdit" type="LineEdit" parent="Control"]
-anchor_left = 0.827
-anchor_top = 0.88
-anchor_right = 1.0
-anchor_bottom = 0.907
-margin_left = -0.200012
-margin_top = -0.00012207
-margin_right = 2.0
-margin_bottom = 2.69995
+anchor_left = 0.733333
+anchor_top = 0.956667
+anchor_right = 0.99
+anchor_bottom = 0.995556
 text = "1"
+__meta__ = {
+"_edit_use_anchors_": true
+}
 
 [node name="Model" type="Spatial" parent="."]
 

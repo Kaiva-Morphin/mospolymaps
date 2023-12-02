@@ -2,27 +2,27 @@ extends Spatial
 
 
 var groups = []
+var ladder_groups = []
 func _ready():
 	var font = $UI/SearchBar/Panel/PREVIEW.get_font("font")
 	font.size = get_viewport().size.x / 600 * 24
 	$UI/SearchBar.rect_position.y = $UI.rect_size.y * 0.95
-	
-	PATHFINDER.call("Load", "data")
 	parse_glb("res://resources/models/result.glb")
+	PATHFINDER.call("Load", "res://MapData.save")
+	
 	groups = []
-	var ladder_groups = []
+	ladder_groups = []
 	var all_groups = PATHFINDER.call("Get_all_groups")
 	for group in all_groups:
 		if !"LADDER" in group:
 			groups.append(group)
 		else:
 			ladder_groups.append(group)
-	print(groups)
 	for l in ladder_groups:
 		var holders = PATHFINDER.call("Get_group_members", l)
 		if len(holders) < 2: continue
-		var a = get_node(holders[0].replace("/AREA", "")) # my mistake :D
-		var b = get_node(holders[1].replace("/AREA", ""))
+		var a = get_node(holders[0]) 
+		var b = get_node(holders[1])
 		var dist = a.translation.distance_to(b.translation)
 		PATHFINDER.call("Register_bind", holders[0], holders[1], dist)
 	
@@ -57,6 +57,7 @@ func parse_glb(path): # todo: autopath using raycasts
 			building_floors.append(node)
 		else:
 			break
+	
 	$CameraOrigin.set_floor(1)
 
 
@@ -109,7 +110,7 @@ func search_in_groups(s):
 	var results = []
 	for group in groups:
 		group = str(group)
-		if group.find(s, 0) == 0:
+		if group.to_lower().find(s.to_lower(), 0) == 0:
 			results.append(group)
 	return results
 
@@ -199,7 +200,7 @@ func _on_Path_pressed():
 	var start = PATHFINDER.call("Get_group_members", start_group)[0]
 	#print(start)
 	var path = PATHFINDER.call("Shortest_path_group", start, end_group)
-	print(path)
+	#print(path)
 	
 	for l in prev_line:
 		l.queue_free()
@@ -218,6 +219,6 @@ func _on_Path_pressed():
 			line.curve.add_point(get_node(path[p]).global_translation)
 			line.curve.add_point(get_node(path[p-1]).global_translation)
 			prev_line.append(line)
-			self.add_child(line)
+			get_node(path[p-1]).add_child(line)
 	close_searchbar()
 #6_LADDER_LEFT(7)

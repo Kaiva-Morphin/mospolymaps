@@ -311,11 +311,11 @@ func _on_LineEdit_text_entered(new_text):
 			node.scale = Vector3.ONE * scale_multipler 
 
 func _on_Save_pressed():
-	PATHFINDER.call("Save", "data")
+	PATHFINDER.call("Save", "MapData.save")
 
 
 func _on_LoadTscn_pressed():
-	PATHFINDER.call("Load", "data")
+	PATHFINDER.call("Load", "MapData.save")
 
 
 func _on_Add_Group_pressed():

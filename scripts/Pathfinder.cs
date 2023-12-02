@@ -181,16 +181,16 @@ public class Pathfinder : Node
 		data.Add(group_to_node);
 		
 		File file = new File();
-        file.Open(filename, File.ModeFlags.Write);
-        file.StoreVar(data);
-        file.Close();
+		file.Open(filename, File.ModeFlags.Write);
+		file.StoreVar(data);
+		file.Close();
 	}
 
 	public void Load(string filename){
 		File f = new File();
-        f.Open(filename, File.ModeFlags.Read);
-        Array decoded = f.GetVar() as Array;
-        f.Close();
+		f.Open(filename, File.ModeFlags.Read);
+		Array decoded = f.GetVar() as Array;
+		f.Close();
 		graph = new Dictionary<string, Array<string>>{};
 		var a_graph = decoded[0] as Dictionary;
 		foreach(string key in a_graph.Keys){
@@ -227,12 +227,10 @@ public class Pathfinder : Node
 			}
 			group_to_node[key] = arr;
 		}
-		GD.Print(Get_all_groups());
 	}
 
 	public Array Get_all_groups(){
 		var res = new Array{};
-		GD.Print(group_to_node.Keys);
 		foreach (Array<string> groups in node_to_groups.Values){
 			foreach(string name in groups){
 				if (!res.Contains(name)){

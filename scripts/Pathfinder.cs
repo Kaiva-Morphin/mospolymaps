@@ -124,7 +124,7 @@ public class GraphData{
 
 		var parsed_distances = JSON.Parse(parsed[1]).Result as Dictionary;
 		foreach (var key in parsed_distances.Keys){
-			GD.Print(key);
+			//GD.Print(key);
 			var keyd = key as Array;
 			//var a = keyd[0] as string;
 			//var b = keyd[1] as string;
@@ -305,6 +305,7 @@ public class Pathfinder : Node
 			if (!graph[start].Contains(end)){
 				graph[start].Add(end);
 				GD.Print("added bind " + start + " with " + end);
+				
 			}
 		} else {
 			graph.Add(start, new Array<string> {end});
@@ -423,6 +424,8 @@ public class Pathfinder : Node
 		return shortestPath;
 	}
 	
+
+	// todo: GROUP -> GROP; make n loops for every node in start group and check all paths to find shortest.
 	public Array<string> Shortest_path_group(string startVertex, string endGroup) // todo: check. may be incorrect
 	{
 		GD.Print(graph);
